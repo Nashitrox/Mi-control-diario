@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10131b">
+<title>Mi Control Diario</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0f16;--panel:#151a25;--panel2:#1b2230;--line:#293244;--text:#f3f5fa;--muted:#9aa6ba;--green:#8bd6a5;--blue:#82b8ff;--purple:#c0a2ff;--orange:#ffc27d;--red:#ff8e98}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#182235 0,#0c0f16 48%);color:var(--text);font:15px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.wrap{max-width:780px;margin:auto;padding:24px 16px 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#8bd6a5,#82b8ff);display:grid;place-items:center;color:#101722;font-weight:900;font-size:19px}.eyebrow{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}.brand h1{font-size:19px;margin:1px 0 0;letter-spacing:-.03em}.datebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.datebar h2{font-size:18px;margin:0}.date-input{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:11px;font:inherit}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:linear-gradient(160deg,rgba(27,34,48,.98),rgba(19,24,35,.98));border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0;box-shadow:0 10px 28px #0002}.wide{grid-column:1/-1}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.label{font-size:13px;color:var(--muted);font-weight:600}.symbol{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:#ffffff0b;font-size:16px}.big{font-size:30px;letter-spacing:-.05em;font-weight:750;margin:2px 0}.unit{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0}.sub{font-size:12px;color:var(--muted);margin-top:2px}.bar{height:7px;background:#30394a;border-radius:99px;overflow:hidden;margin:13px 0 8px}.fill{height:100%;width:0;border-radius:99px;background:var(--green);transition:width .2s}.actions{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#ffffff08;color:var(--text);padding:9px 12px;border-radius:11px;font:600 13px inherit;cursor:pointer}.btn.primary{background:var(--green);color:#101820;border-color:transparent}.btn:active{transform:scale(.98)}.btn.small{padding:6px 9px;font-size:12px}.btn.danger{color:var(--red)}.btn.blue{background:#82b8ff;color:#101820;border:0}.btn.purple{background:#c0a2ff;color:#151020;border:0}.btn.orange{background:#ffc27d;color:#21170b;border:0}
+.metric-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.metric-row .big{font-size:25px}.form-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field{min-width:0;width:100%;background:#0f1420;border:1px solid var(--line);border-radius:10px;padding:10px 11px;color:var(--text);font:inherit}.field:focus,.date-input:focus{outline:2px solid #82b8ff66;border-color:var(--blue)}.field.narrow{width:110px}.field.mid{width:145px}textarea.field{resize:vertical;min-height:88px}.section-title{font-size:15px;margin:0 0 12px}.list{display:grid;gap:8px}.entry{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0e1420;border:1px solid #273144;border-radius:12px;padding:10px 11px}.entry-main{min-width:0}.entry-title{font-weight:650}.entry-meta{font-size:12px;color:var(--muted)}.entry-actions{display:flex;gap:5px;flex-shrink:0}.empty{font-size:13px;color:var(--muted);padding:12px 0}.tabs{display:flex;gap:8px;margin:18px 0 12px}.tab{flex:1}.tab.active{background:#263449;border-color:#55749e;color:#fff}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px}.notice{font-size:12px;color:var(--muted);margin-top:10px}.pill{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:4px 8px;color:var(--muted)}
+@media(max-width:520px){.wrap{padding:18px 12px 42px}.grid{gap:9px}.card{padding:13px;border-radius:15px}.big{font-size:26px}.card-head{margin-bottom:8px}.actions .btn{flex:1}.datebar{align-items:flex-start;flex-direction:column}.date-input{width:100%}.entry{align-items:flex-start}.entry-actions{flex-direction:column}.metric-row .big{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><div class="logo">M</div><div><div class="eyebrow">Tu espacio personal</div><h1>Mi Control Diario</h1></div></div>
+ <span class="pill">GUARDADO LOCAL</span>
+</header>
+<div class="datebar"><div><div class="eyebrow">Resumen del día</div><h2 id="dateTitle">Hoy</h2></div><input class="date-input" id="dayPicker" type="date" aria-label="Elegir día"></div>
+<div class="grid">
+ <section class="card">
+  <div class="card-head"><span class="label">CALORÍAS</span><span class="symbol">◉</span></div>
+  <div class="big" id="calTotal">0 <span class="unit">kcal</span></div>
+  <div class="sub"><span id="calLeft">1.800</span> kcal restantes · objetivo 1.800</div>
+  <div class="bar"><div class="fill" id="calBar"></div></div>
+  <div class="actions"><button class="btn primary" id="addCal">+ Agregar</button><button class="btn" id="removeCal">− Quitar</button></div>
+ </section>
+ <section class="card">
+  <div class="card-head"><span class="label">AGUA</span><span class="symbol">≈</span></div>
+  <div class="big" id="waterTotal">0 <span class="unit">ml</span></div>
+  <div class="sub">Objetivo diario: 2.500 ml</div>
+  <div class="bar"><div class="fill" id="waterBar" style="background:var(--blue)"></div></div>
+  <div class="actions"><button class="btn blue" id="addWater">+ 250 ml</button><button class="btn" id="removeWater">− 250 ml</button></div>
+ </section>
+ <section class="card">
+  <div class="card-head"><span class="label">SUEÑO</span><span class="symbol">☾</span></div>
+  <div class="big" id="sleepTotal">— <span class="unit">horas</span></div>
+  <div class="sub">Duración total registrada</div>
+  <div class="actions"><button class="btn purple" id="setSleep">Registrar sueño</button></div>
+ </section>
+ <section class="card">
+  <div class="card-head"><span class="label">PASOS</span><span class="symbol">↗</span></div>
+  <div class="big" id="stepsTotal">0 <span class="unit">pasos</span></div>
+  <div class="sub">Total del día</div>
+  <div class="actions"><button class="btn" id="setSteps">Editar pasos</button></div>
+ </section>
+ <section class="card wide">
+  <div class="card-head"><span class="label">EJERCICIO</span><span class="symbol">✦</span></div>
+  <div class="metric-row"><div><div class="big" id="exerciseTotal">0 <span class="unit">min</span></div><div class="sub">Tiempo de actividad registrado</div></div><button class="btn orange" id="addExercise">+ Añadir ejercicio</button></div>
+  <div id="exerciseList" class="list" style="margin-top:12px"></div>
+ </section>
+ <section class="card wide">
+  <div class="card-head"><span class="label">NOTAS PERSONALES</span><span class="symbol">✎</span></div>
+  <textarea id="notes" class="field" placeholder="¿Cómo estuvo tu día? Añade cualquier observación..."></textarea>
+  <div class="notice" id="saveStatus">Las notas se guardan automáticamente en este dispositivo.</div>
+ </section>
+</div>
+<div class="tabs"><button class="btn tab active" data-tab="today">Día actual</button><button class="btn tab" data-tab="history">Historial</button></div>
+<section class="card hidden" id="historyPanel">
+ <h3 class="section-title">Historial diario</h3>
+ <div class="sub" style="margin-bottom:12px">Selecciona un día para revisar o corregir sus registros.</div>
+ <div id="historyList" class="list"></div>
+</section>
+<div class="footer">Tus datos permanecen en el almacenamiento de este navegador. No se envían a ningún servidor.</div>
+</div>
+<script>
+const KEY='mi-control-diario-v1', CAL_GOAL=1800, WATER_GOAL=2500;
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+let db={};try{db=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){db={}}
+let selected=today();
+function blank(){return {calories:[],water:0,sleep:null,steps:0,exercises:[],notes:''}}
+function day(){if(!db[selected])db[selected]=blank();return db[selected]}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));}
+function sum(a){return a.reduce((n,x)=>n+Number(x.value||0),0)}
+function fmt(n){return Math.round(n).toLocaleString('es-CL')}
+function niceDate(s){return new Date(s+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function render(){
+ const d=day(),cal=sum(d.calories);
+ $('dateTitle').textContent=selected===today()?'Hoy · '+niceDate(selected):niceDate(selected);
+ $('dayPicker').value=selected;
+ $('calTotal').innerHTML=fmt(cal)+' <span class="unit">kcal</span>';
+ $('calLeft').textContent=fmt(CAL_GOAL-cal);
+ $('calBar').style.width=Math.min(100,cal/CAL_GOAL*100)+'%';
+ $('waterTotal').innerHTML=fmt(d.water)+' <span class="unit">ml</span>';
+ $('waterBar').style.width=Math.min(100,d.water/WATER_GOAL*100)+'%';
+ $('sleepTotal').innerHTML=(d.sleep===null?'—':Number(d.sleep).toLocaleString('es-CL',{maximumFractionDigits:1}))+' <span class="unit">horas</span>';
+ $('stepsTotal').innerHTML=fmt(d.steps)+' <span class="unit">pasos</span>';
+ $('exerciseTotal').innerHTML=fmt(sum(d.exercises))+' <span class="unit">min</span>';
+ $('notes').value=d.notes||'';
+ $('exerciseList').innerHTML=d.exercises.length?d.exercises.map((x,i)=>`<div class="entry"><div class="entry-main"><div class="entry-title">${esc(x.name)}</div><div class="entry-meta">${fmt(x.value)} min</div></div><div class="entry-actions"><button class="btn small" onclick="editExercise(${i})">Editar</button><button class="btn small danger" onclick="deleteExercise(${i})">×</button></div></div>`).join(''):'<div class="empty">Todavía no hay ejercicios registrados.</div>';
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addCalories(sign){const v=prompt(sign>0?'¿Cuántas calorías quieres agregar?':'¿Cuántas calorías quieres quitar?','200');if(v===null)return;const n=Number(v);if(!Number.isFinite(n)||n<=0)return alert('Ingresa una cantidad válida.');const d=day();if(sign>0)d.calories.push({value:n,id:Date.now()});else{let left=n;while(left>0&&d.calories.length){const last=d.calories[d.calories.length-1];if(last.value<=left){left-=last.value;d.calories.pop()}else{last.value-=left;left=0}}if(left>0)alert('Se quitaron todas las calorías registradas; no había más para descontar.')}save();render()}
+$('addCal').onclick=()=>addCalories(1);$('removeCal').onclick=()=>addCalories(-1);
+$('addWater').onclick=()=>{day().water+=250;save();render()};
+$('removeWater').onclick=()=>{day().water=Math.max(0,day().water-250);save();render()};
+$('setSleep').onclick=()=>{const v=prompt('¿Cuántas horas dormiste? (ejemplo: 7.5)',day().sleep??'8');if(v===null)return;const n=Number(v);if(!Number.isFinite(n)||n<0||n>24)return alert('Ingresa un valor entre 0 y 24.');day().sleep=n;save();render()};
+$('setSteps').onclick=()=>{const v=prompt('Total de pasos del día',day().steps||'');if(v===null)return;const n=Number(v);if(!Number.isInteger(n)||n<0)return alert('Ingresa un número entero válido.');day().steps=n;save();render()};
+$('addExercise').onclick=()=>{const name=prompt('Tipo de ejercicio (ejemplo: caminata, pesas)');if(name===null||!name.trim())return;const v=prompt('Duración en minutos','30');if(v===null)return;const n=Number(v);if(!Number.isFinite(n)||n<=0)return alert('Ingresa minutos válidos.');day().exercises.push({name:name.trim(),value:n});save();render()};
+window.editExercise=i=>{const x=day().exercises[i];const name=prompt('Nombre del ejercicio',x.name);if(name===null)return;const v=prompt('Duración en minutos',x.value);if(v===null)return;const n=Number(v);if(!name.trim()||!Number.isFinite(n)||n<=0)return alert('Revisa los datos.');x.name=name.trim();x.value=n;save();render()};
+window.deleteExercise=i=>{if(confirm('¿Eliminar este ejercicio?')){day().exercises.splice(i,1);save();render()}};
+$('notes').addEventListener('input',()=>{day().notes=$('notes').value;save();$('saveStatus').textContent='Guardado';});
+$('dayPicker').addEventListener('change',e=>{if(e.target.value){selected=e.target.value;render();showTab('today')}});
+function showTab(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));$('historyPanel').classList.toggle('hidden',t!=='history');if(t==='history')renderHistory()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function renderHistory(){const keys=Object.keys(db).sort().reverse();$('historyList').innerHTML=keys.length?keys.map(k=>{const d=db[k];return `<div class="entry"><div class="entry-main"><div class="entry-title">${niceDate(k)}</div><div class="entry-meta">${fmt(sum(d.calories))} kcal · ${fmt(d.water)} ml agua · ${d.sleep??'—'} h sueño · ${fmt(d.steps)} pasos</div></div><button class="btn small" onclick="openDay('${k}')">Abrir</button></div>`}).join(''):'<div class="empty">Aún no hay días guardados.</div>'}
+window.openDay=k=>{selected=k;render();showTab('today')};
+render();
+</script>
+</body></html>
